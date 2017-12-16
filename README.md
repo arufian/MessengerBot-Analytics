@@ -1,7 +1,7 @@
 # Facebook Messenger Bot and Facebook Analytics
 Training material of Facebook Messenger Bot and Facebook Analytics for [Facebook Masterclass Training](http://fbmasterclass4devs.id/). Facebook Masterclass Training is official workshop training provided by Facebook.
 
-This repo is forked from [prayudiutomo/Messenger-Bot-Ngrok-Tutorial](hhttps://github.com/prayudiutomo/Messenger-Bot-Ngrok-Tutorial)
+This repo revision of [prayudiutomo/Messenger-Bot-Ngrok-Tutorial](https://github.com/prayudiutomo/Messenger-Bot-Ngrok-Tutorial)
 
 ---
 
