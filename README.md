@@ -1,7 +1,7 @@
 # Facebook Messenger Bot and Facebook Analytics
 Training material of Facebook Messenger Bot and Facebook Analytics for [Facebook Masterclass Training](http://fbmasterclass4devs.id/). Facebook Masterclass Training is official workshop training provided by Facebook.
 
-This repo revision of [prayudiutomo/Messenger-Bot-Ngrok-Tutorial](https://github.com/prayudiutomo/Messenger-Bot-Ngrok-Tutorial)
+This repo is a revision of [prayudiutomo/Messenger-Bot-Ngrok-Tutorial](https://github.com/prayudiutomo/Messenger-Bot-Ngrok-Tutorial)
 
 ---
 
@@ -288,3 +288,139 @@ function sendTextMessage(sender, text) {
   })
 }
 ```
+
+#### 3. Create Kerang Ajaib-like bot
+
+```javascript
+app.post('/webhook/', function (req, res) {
+  let data = req.body
+  if(data.object == 'page'){
+    data.entry.forEach(function(pageEntry) {
+      pageEntry.messaging.forEach(function(messagingEvent) {
+        console.log(messagingEvent)
+        if(messagingEvent.message.text.indexOf('?') > 0){
+          var randInt =  Math.floor(Math.random() * (1 - 0 + 1)) + 0;
+          var strPost = 'Ya';
+          if(randInt === 0) strPost = 'Tidak';
+          sendTextMessage(messagingEvent.sender.id, strPost);
+        } else {
+          sendTextMessage(messagingEvent.sender.id, 'Maaf saya hanya bisa menjawab pertanyaan yang dimulai dengan kata apakah dan diakhiri dengan tanda tanya. Contoh: Apakah saya jago ?');
+        }
+      }); 
+    });
+    res.sendStatus(200)
+  }
+})
+```
+
+#### 4. Set a Welcome Message
+
+```ssh
+curl -X POST -H "Content-Type: application/json" -d '{
+  "greeting": [
+    {
+      "locale":"default",
+      "text":"Hello!" 
+    }, {
+      "locale":"en_US",
+      "text":"Hello you there"
+    }, {
+      "locale":"id_ID",
+      "text":"Halo Apakabar ?"
+    }
+  ]
+}' "https://graph.facebook.com/v2.6/me/messenger_profile?access_token=<PAGE_ACCESS_TOKEN>"
+```
+
+#### 4. Quick Replies
+
+- Options button
+
+```javascript
+function sendOptionsButton(sender) {
+  let messageData = {
+    text: 'Kamu suka film apa',
+    "quick_replies": [
+       {
+        "content_type":"text",
+        "title":"Drama Romantis",
+        "payload":"DRAMA"
+      },
+      {
+        "content_type":"text",
+        "title":"Aksi",
+        "payload":"AKSI"
+      },
+      {
+        "content_type":"text",
+        "title":"Humor",
+        "payload":"HUMOR"
+      },
+      {
+        "content_type":"text",
+        "title":"Lainnya",
+        "payload":"LAINNYA"
+      },
+    ]
+  }
+  sendMessage(sender, messageData)
+}
+```
+
+```javascript
+function replyAnswerMovie(text) {
+  if(text === 'DRAMA') {
+    return 'Berarti anda suka AADC dong'
+  } else if(text === 'AKSI') {
+    return 'Film-film nya Bruce Willis asik tuh buat kamu'
+  } else if(text === 'HUMOR') {
+    return 'Warkop udah nonton belum ?'
+  } else if(text === 'LAINNYA') {
+    return 'Cintailah Film Indonesia'
+  } else {
+    return null
+  }
+}
+```
+
+```javascript
+if(messagingEvent.message.quick_reply) {
+  const replyMovie = replyAnswerMovie(messagingEvent.message.quick_reply.payload)
+  console.log('replyMovie', replyMovie)
+  if(replyMovie !== null) {
+    sendTextMessage(messagingEvent.sender.id, replyMovie);
+    return;
+  }
+}
+```
+
+```javascript
+else if(messagingEvent.message.text.toLowerCase().indexOf('opsi') >= 0){
+  sendOptionsButton(messagingEvent.sender.id)
+} 
+```
+
+- location
+
+```javascript
+function sendLocationOption(sender) {
+  let messageData = {
+    text: 'Please Share your location',
+    "quick_replies": [
+      {
+        "content_type":"location"
+      },
+    ]
+  }
+  sendMessage(sender, messageData)
+}
+```
+
+```javascript
+else if(messagingEvent.message.text.toLowerCase().indexOf('location') >= 0){
+  sendLocationOption(messagingEvent.sender.id)
+} 
+```
+
+
+## Excercise & Presentation (Let out your creativity - Create your own bot)
