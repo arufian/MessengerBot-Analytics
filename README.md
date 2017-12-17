@@ -429,6 +429,12 @@ app.post('/webhook/', function (req, res) {
       pageEntry.messaging.forEach(function(messagingEvent) {
         console.log(messagingEvent)
 
+        if(messagingEvent.message.attachments &&
+        		messagingEvent.message.attachments[0].type == 'location') {
+        	sendTextMessage(messagingEvent.sender.id, 'Lokasi kamu: '+messagingEvent.message.attachments[0].url);
+        	return;
+        }
+
         if(messagingEvent.message.quick_reply) {
           const replyMovie = replyAnswerMovie(messagingEvent.message.quick_reply.payload)
           console.log('replyMovie', replyMovie)
