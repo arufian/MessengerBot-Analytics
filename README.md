@@ -422,20 +422,37 @@ function replyAnswerMovie(text) {
 ```
 
 ```javascript
-if(messagingEvent.message.quick_reply) {
-  const replyMovie = replyAnswerMovie(messagingEvent.message.quick_reply.payload)
-  console.log('replyMovie', replyMovie)
-  if(replyMovie !== null) {
-    sendTextMessage(messagingEvent.sender.id, replyMovie);
-    return;
-  }
-}
-```
+app.post('/webhook/', function (req, res) {
+  let data = req.body
+  if(data.object == 'page'){
+    data.entry.forEach(function(pageEntry) {
+      pageEntry.messaging.forEach(function(messagingEvent) {
+        console.log(messagingEvent)
 
-```javascript
-else if(messagingEvent.message.text.toLowerCase().indexOf('opsi') >= 0){
-  sendOptionsButton(messagingEvent.sender.id)
-} 
+        if(messagingEvent.message.quick_reply) {
+          const replyMovie = replyAnswerMovie(messagingEvent.message.quick_reply.payload)
+          console.log('replyMovie', replyMovie)
+          if(replyMovie !== null) {
+            sendTextMessage(messagingEvent.sender.id, replyMovie);
+            return;
+          }
+        }
+
+        if(messagingEvent.message.text.indexOf('?') > 0){
+          var randInt =  Math.floor(Math.random() * (1 - 0 + 1)) + 0;
+          var strPost = 'Ya';
+          if(randInt === 0) strPost = 'Tidak';
+          sendTextMessage(messagingEvent.sender.id, strPost);
+        } else if(messagingEvent.message.text.toLowerCase().indexOf('opsi') >= 0){
+          sendOptionsButton(messagingEvent.sender.id)
+        } else {
+          sendTextMessage(messagingEvent.sender.id, 'Maaf saya hanya bisa menjawab pertanyaan yang dimulai dengan kata apakah dan diakhiri dengan tanda tanya. Contoh: Apakah saya jago ?');
+        }
+      }); 
+    });
+    res.sendStatus(200)
+  }
+})
 ```
 
 - location
