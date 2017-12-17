@@ -368,6 +368,44 @@ function sendOptionsButton(sender) {
 ```
 
 ```javascript
+function sendMessage(sender, message) {
+  let url = `https://graph.facebook.com/v2.6/${sender}?fields=first_name,last_name,profile_pic&access_token=${token}`;
+  
+  request(url, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      let parseData = JSON.parse(body);
+      request({
+        url: 'https://graph.facebook.com/v2.10/me/messages',
+        qs: {
+          access_token: token
+        },
+        method: 'POST',
+        json: {
+          recipient: {
+            id: sender
+          },
+          message: message,
+        }
+      }, function (error, response, body) {
+        if (error) {
+          console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+          console.log('Error: ', response.body.error)
+        }
+      })
+    }
+  })
+}
+
+function sendTextMessage(sender, text) {
+  let messageData = {
+    text: text
+  }
+  sendMessage(sender, messageData);
+}
+```
+
+```javascript
 function replyAnswerMovie(text) {
   if(text === 'DRAMA') {
     return 'Berarti anda suka AADC dong'
